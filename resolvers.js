@@ -41,6 +41,31 @@ export const resolvers = {
       if (game.title) existingGame.title = game.title;
       if (game.platform) existingGame.platform = game.platform;
       return existingGame;
-    }
+    },
+    addReview: (_, { review }) => {
+      const { rating, content, game_id, author_id } = review;
+      const newReview = {
+        id: Math.floor(Math.random() * 10000).toString(), // Simple ID generation
+        rating,
+        content,
+        game_id,
+        author_id,
+      };
+      db.reviews.push(newReview);
+      return newReview;
+    },
+    deleteReview: (_, { id }) => {
+      db.reviews = db.reviews.filter(review => review.id !== id);
+      return db.reviews;
+    },
+    updateReview: (_, { id, review }) => {
+      const existingReview = db.reviews.find(r => r.id === id);
+      if (!existingReview) throw new Error("Review not found");
+      if (review.rating !== undefined) existingReview.rating = review.rating;
+      if (review.content) existingReview.content = review.content;
+      if (review.game_id) existingReview.game_id = review.game_id;
+      if (review.author_id) existingReview.author_id = review.author_id;
+      return existingReview;
+    },
   }
 }
